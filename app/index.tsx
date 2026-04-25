@@ -4,7 +4,6 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.content}>
-      
         <Text style={styles.text}>Home nueva app.</Text>
       </View>
     </SafeAreaView>
