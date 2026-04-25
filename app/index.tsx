@@ -1,6 +1,7 @@
 import { useUserLocal } from '@/contexts/user-local-context';
 import { useUsersQuery } from '@/hooks/use-users-query';
 import { User } from '@/types/user';
+import { router } from 'expo-router';
 import {
   ActivityIndicator,
   Alert,
@@ -16,7 +17,15 @@ import {
 
 export default function HomeScreen() {
   const { data, isLoading, isError, isFetching, refetch } = useUsersQuery();
-  const { favorites, selectedIds, toggleFavorite, toggleSelectedOrdered } = useUserLocal();
+  const {
+    favorites,
+    selectedIds,
+    toggleFavorite,
+    addManyFavorites,
+    toggleSelectedOrdered,
+    selectAll,
+    clearSelection,
+  } = useUserLocal();
   const users = data || [];
   const favoriteUsers = users.filter((user) => favorites[user.id]);
 
@@ -26,6 +35,27 @@ export default function HomeScreen() {
     if (!changed) {
       Alert.alert('Aviso', 'Selecciona en orden alfabetico por el apellido');
     }
+  }
+
+  function addSelectedFavorites() {
+    if (selectedIds.length === 0) {
+      Alert.alert('Aviso', 'Selecciona al menos un usuario');
+      return;
+    }
+
+    addManyFavorites(selectedIds);
+    clearSelection();
+  }
+
+  function selectAllUsers() {
+    const ids = users.map((user) => user.id);
+
+    selectAll(users);
+    addManyFavorites(ids);
+  }
+
+  function openDetail(userId: string) {
+    router.push(`/user/${userId}` as never);
   }
 
   if (isLoading) {
@@ -56,9 +86,19 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={
           <View style={styles.header}>
-            <FavoriteList users={favoriteUsers} />
+            <FavoriteList users={favoriteUsers} onUserPress={openDetail} />
             <Text style={styles.title}>Home</Text>
             <Text style={styles.message}>Bienvenido</Text>
+
+            <View style={styles.buttonsRow}>
+              <Pressable style={styles.optionButton} onPress={addSelectedFavorites}>
+                <Text style={styles.optionButtonText}>Agregar seleccion</Text>
+              </Pressable>
+
+              <Pressable style={styles.optionButtonDark} onPress={selectAllUsers}>
+                <Text style={styles.optionButtonTextDark}>Seleccionar todos</Text>
+              </Pressable>
+            </View>
           </View>
         }
         ListEmptyComponent={
@@ -75,6 +115,7 @@ export default function HomeScreen() {
             isSelected={selectedIds.includes(item.id)}
             onFavoritePress={() => toggleFavorite(item.id)}
             onSelectPress={() => onSelectUser(item)}
+            onDetailPress={() => openDetail(item.id)}
           />
         )}
       />
@@ -82,7 +123,13 @@ export default function HomeScreen() {
   );
 }
 
-function FavoriteList({ users }: { users: User[] }) {
+function FavoriteList({
+  users,
+  onUserPress,
+}: {
+  users: User[];
+  onUserPress: (userId: string) => void;
+}) {
   return (
     <View style={styles.favoritesBox}>
       <Text style={styles.sectionTitle}>Favoritos</Text>
@@ -98,7 +145,7 @@ function FavoriteList({ users }: { users: User[] }) {
           renderItem={({ item }) => (
             <Pressable
               style={styles.favoriteCard}
-              onPress={() => {}}>
+              onPress={() => onUserPress(item.id)}>
               <Image source={{ uri: item.photo }} style={styles.favoritePhoto} />
               <View style={styles.favoriteInfo}>
                 <Text numberOfLines={1} style={styles.favoriteName}>
@@ -122,12 +169,14 @@ function UserCard({
   isSelected,
   onFavoritePress,
   onSelectPress,
+  onDetailPress,
 }: {
   user: User;
   isFavorite: boolean;
   isSelected: boolean;
   onFavoritePress: () => void;
   onSelectPress: () => void;
+  onDetailPress: () => void;
 }) {
   return (
     <View style={styles.card}>
@@ -151,7 +200,7 @@ function UserCard({
 
         <Pressable
           style={styles.detailButton}
-          onPress={() => {}}>
+          onPress={onDetailPress}>
           <Text style={styles.detailText}>Ver</Text>
         </Pressable>
       </View>
@@ -187,6 +236,37 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 15,
     color: '#667085',
+  },
+  buttonsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 14,
+  },
+  optionButton: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#0B6B63',
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  optionButtonDark: {
+    flex: 1,
+    backgroundColor: '#0B6B63',
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  optionButtonText: {
+    color: '#0B6B63',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  optionButtonTextDark: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
   },
   favoritesBox: {
     marginBottom: 18,
