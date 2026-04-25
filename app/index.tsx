@@ -17,13 +17,14 @@ import {
 export default function HomeScreen() {
   const { data, isLoading, isError, isFetching, refetch } = useUsersQuery();
   const { favorites, selectedIds, toggleFavorite, toggleSelectedOrdered } = useUserLocal();
+  const users = data || [];
+  const favoriteUsers = users.filter((user) => favorites[user.id]);
 
   function onSelectUser(user: User) {
-    const users = data || [];
     const changed = toggleSelectedOrdered(user.id, users);
 
     if (!changed) {
-      Alert.alert('Aviso', 'Por ahora debes seleccionar en orden.');
+      Alert.alert('Aviso', 'Selecciona en orden alfabetico por el apellido');
     }
   }
 
@@ -51,10 +52,11 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.screen}>
       <FlatList
-        data={data || []}
+        data={users}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={
           <View style={styles.header}>
+            <FavoriteList users={favoriteUsers} />
             <Text style={styles.title}>Home</Text>
             <Text style={styles.message}>Bienvenido</Text>
           </View>
@@ -77,6 +79,40 @@ export default function HomeScreen() {
         )}
       />
     </SafeAreaView>
+  );
+}
+
+function FavoriteList({ users }: { users: User[] }) {
+  return (
+    <View style={styles.favoritesBox}>
+      <Text style={styles.sectionTitle}>Favoritos</Text>
+
+      {users.length === 0 ? (
+        <Text style={styles.emptyFavoriteText}>Aun no tienes favoritos.</Text>
+      ) : (
+        <FlatList
+          data={users}
+          horizontal
+          keyExtractor={(item) => item.id}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <Pressable
+              style={styles.favoriteCard}
+              onPress={() => {}}>
+              <Image source={{ uri: item.photo }} style={styles.favoritePhoto} />
+              <View style={styles.favoriteInfo}>
+                <Text numberOfLines={1} style={styles.favoriteName}>
+                  {item.name}
+                </Text>
+                <Text numberOfLines={1} style={styles.favoriteLastName}>
+                  {item.lastName}
+                </Text>
+              </View>
+            </Pressable>
+          )}
+        />
+      )}
+    </View>
   );
 }
 
@@ -115,7 +151,7 @@ function UserCard({
 
         <Pressable
           style={styles.detailButton}
-          onPress={() => Alert.alert('Detalle', 'Esta pantalla se agrega despues.')}>
+          onPress={() => {}}>
           <Text style={styles.detailText}>Ver</Text>
         </Pressable>
       </View>
@@ -151,7 +187,52 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 15,
     color: '#667085',
-    textAlign: 'center',
+  },
+  favoritesBox: {
+    marginBottom: 18,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#101828',
+    marginBottom: 8,
+  },
+  emptyFavoriteText: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E4E7EC',
+    borderRadius: 8,
+    padding: 12,
+    color: '#667085',
+  },
+  favoriteCard: {
+    width: 150,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E4E7EC',
+    borderRadius: 8,
+    padding: 8,
+    marginRight: 10,
+  },
+  favoritePhoto: {
+    width: 42,
+    height: 42,
+    borderRadius: 8,
+    marginRight: 8,
+  },
+  favoriteInfo: {
+    flex: 1,
+  },
+  favoriteName: {
+    color: '#101828',
+    fontWeight: '700',
+  },
+  favoriteLastName: {
+    marginTop: 2,
+    color: '#667085',
+    fontSize: 12,
   },
   emptyBox: {
     padding: 24,
