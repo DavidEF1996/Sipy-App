@@ -3,6 +3,7 @@ import { RandomUserResponse, User } from '@/types/user';
 const API_URL = 'https://randomuser.me/api/?results=30&seed=sipy';
 
 function formatUser(user: RandomUserResponse['results'][0]): User {
+  // datos para las cards y detalle
   return {
     id: user.login.uuid,
     name: user.name.first,
@@ -27,6 +28,7 @@ export async function getUsers() {
   const data: RandomUserResponse = await response.json();
   const users = data.results.map(formatUser);
 
+  // orden por apellido
   users.sort((a, b) => a.lastName.localeCompare(b.lastName));
 
   return users;

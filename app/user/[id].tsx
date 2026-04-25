@@ -27,6 +27,7 @@ export default function UserDetailScreen() {
 
   useEffect(() => {
     if (user && phoneLoaded !== user.id) {
+      // telefono local guardado
       setPhone(localPhones[user.id] || '');
       setPhoneLoaded(user.id);
     }
@@ -92,7 +93,7 @@ export default function UserDetailScreen() {
           <InfoRow label="Direccion" value={user.address} />
         </View>
 
-        {/* telefono guardado en la app */}
+        {/* telefono local */}
         <View style={styles.phoneBox}>
           <Text style={styles.phoneTitle}>Telefono local</Text>
           <TextInput

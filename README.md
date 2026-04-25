@@ -1,50 +1,73 @@
-# Welcome to your Expo app 👋
+# Davidegas- Sipy App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicacion movil hecha para listar usuarios, manejar favoritos y editar un telefono local.
 
-## Get started
+## Stack usado
 
-1. Install dependencies
+- React Native
+- Expo
+- TypeScript
+- Expo Router
+- Tanstack React Query
+- React Context
+- StyleSheet
 
-   ```bash
-   npm install
-   ```
+## API
 
-2. Start the app
+Se usa Random User API con seed fijo:
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```txt
+https://randomuser.me/api/?results=30&seed=sipy
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Instalacion
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Ejecutar app
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm run start
+```
 
-## Join the community
+Probar el app en un emulador de android o en un dispositivo físico
 
-Join our community of developers creating universal apps.
+## Scripts
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+npm run start
+npm run android
+npm run ios
+npm run web
+npm run lint
+```
+
+## Funcionalidades
+
+- Listado de usuarios ordenada por apellidos y en cards
+- Pull to refresh.
+- Loading, error y mensaje cuando no hay datos.
+- Favoritos en una lista horizontal, agregar y quitar favoritos desde la lista
+- Seleccion de usuarios con checkbox.
+- Opcion para agregar seleccion a favoritos.
+- Opcion para seleccionar todos.
+- Pantalla de detalle por usuario.
+- Editar telefono local.
+
+## Regla de seleccion
+
+Los usuarios se muestran ordenados por apellido.
+
+Para seleccionar usuarios se debe seguir ese mismo orden. No se puede saltar un usuario de la lista.    
+
+## Estructura
+
+```txt
+app/        pantallas
+contexts/   estado local
+hooks/      hooks de la app
+services/   consumo de API
+types/      tipos de TypeScript
+```

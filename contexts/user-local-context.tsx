@@ -48,6 +48,7 @@ export function UserLocalProvider({ children }: PropsWithChildren) {
     if (isSelected) {
       const lastSelectedId = selectedIds[selectedIds.length - 1];
 
+      // solo se puede quitar el ultimo marcado
       if (lastSelectedId !== userId) {
         return false;
       }
@@ -56,6 +57,7 @@ export function UserLocalProvider({ children }: PropsWithChildren) {
       return true;
     }
 
+    // solo se puede marcar el siguiente de la lista
     if (userIndex !== selectedIds.length) {
       return false;
     }
